@@ -115,8 +115,15 @@
                                     </div-->
                                 </div>
                                 <div class="conversation-input row">
-                                    <input type="text" class="form-control" id="inputMessage" placeholder="Habla con Watson ..."  ng-keydown="send($event)" ng-model="inputMessage"></input>
-                                </div>                                                              
+                                    <input type="text" class="form-control col-sm-9 col-md-9" id="inputMessage" placeholder="Habla con Watson ..."  ng-keydown="send($event)" ng-model="inputMessage"></input>
+                                    <div class="col-sm-1 col-md-1"></div>
+                                    <button type="button" class="btn btn-danger btn-lg col-sm-2 col-md-2" ng-speech-recognition-start ng-speech-recognition-end="displayTranscript()" ng-show="checkSpeech()">
+                                        <span class="glyphicon glyphicon-volume-up" aria-hidden="true"></span>
+                                    </button>
+                                </div>                                
+                                
+                                
+
                             </div>
                         </div>
                     </div>

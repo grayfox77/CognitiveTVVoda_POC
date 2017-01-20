@@ -7,8 +7,8 @@ VodafoneTVApp
 .run(['$anchorScroll', function($anchorScroll) {
     $anchorScroll.yOffset = 50;
 }])
-.controller('ChatController', ['$scope', '$http', '$location', '$anchorScroll', 'serviceData',
-    function ChatController($scope, $http, $location, $anchorScroll, serviceData) {
+.controller('ChatController', ['$scope', '$http', '$location', '$anchorScroll', 'serviceData', '$rootScope', '$window',
+    function ChatController($scope, $http, $location, $anchorScroll, serviceData, $rootScope, $window) {
 
         console.log("INICIANDO CHAT CONTROLLER ... ");
         console.log("Iniciando Conversacion ... ");
@@ -93,14 +93,22 @@ VodafoneTVApp
                     var result = new Response();
                     result.id = "Identifier";
                     //result.items = response.context.context;
-                    result.items = response.context;
-                    result.text = response.output.text;
+                    result.items = response.context;                    
+                    //result.text = response.output.text;
+                    result.text = response.output.text.length > 0 ? response.output.text : "Lo siento, no te he entendido";
                     // ---------------------------------------------------------
                     receiveResponse(true, null, result);
                 },
                 error: function (xhr, textStatus, error) {
                     console.log(xhr.statusText);
-                    receiveResponse(false, JSON.stringify(xhr), null);
+                    var result = new Response();
+                    result.id = "Identifier";
+                    //result.items = response.context.context;
+                    result.items = [];
+                    
+                    result.text = "Lo sentimos, se ha producido un problema de comunicaci&oacute;n con el servicio"
+                    receiveResponse(true, null, result);
+                    //receiveResponse(false, JSON.stringify(xhr), null);
                 }
             });
             document.getElementById("inputMessage").value = "";
@@ -125,6 +133,13 @@ VodafoneTVApp
             console.log("VACIADO ... " , wContext);
         }
         
+
+        $scope.displayTranscript = function (){
+            console.log($rootScope.transcript);
+            $scope.inputMessage = $rootScope.transcript;
+            $scope.sendMessage();
+            $scope.inputMessage = "";
+        }
 
         $scope.sendMessage();
         serviceData.updateCurrentLayer(serviceData.getNavigationLayers.main);
@@ -224,6 +239,24 @@ VodafoneTVApp
             }
              
         }
+
+        
+
+        $scope.checkSpeech = function () {
+            try {
+                if (webkitSpeechRecognition)
+                    return true;
+                else
+                    return false;
+            } catch (e){
+                return false;
+            }
+        }
+
+
+
+
+        
 
     }
 ]);

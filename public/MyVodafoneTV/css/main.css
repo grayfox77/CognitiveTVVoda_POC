@@ -2,7 +2,7 @@ body {
 	background: url('../img/bgSofa2.jpg') no-repeat center center ;
     background-size:auto 100%;
    	top:0;
-    position: absolute;
+    position: fixed;
     height: 100%;
     width: 100%;
     z-index: 1000;
@@ -380,7 +380,7 @@ body {
 .vf-logo {
     
     top: 0px;
-    left: -200px;
+    left: -230px;
     z-index: 999;
     position: absolute;
 }
@@ -394,6 +394,9 @@ body {
     }
 }
 
+#inputMessage {
+    width:auto !important;
+}
 
 
 /* CONTENT TYPES SPRITES */
