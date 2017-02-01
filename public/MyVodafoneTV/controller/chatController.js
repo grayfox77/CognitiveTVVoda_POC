@@ -243,7 +243,7 @@ VodafoneTVApp
         
 
         $scope.checkSpeech = function () {
-            try {
+            /*try {
                 if (webkitSpeechRecognition)
                     return true;
                 else
