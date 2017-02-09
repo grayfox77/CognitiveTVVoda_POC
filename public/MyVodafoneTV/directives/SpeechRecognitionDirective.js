@@ -8,7 +8,7 @@ angular.module('app.directives', []).directive('ngSpeechRecognitionStart', funct
 	return {
 		restrict: 'A',
 		link: function ($scope, $element, $attrs) {
-			var recognition = new webkitSpeechRecognition();
+			var recognition = new webkitSpeechRecognition() || new SpeechRecognition();
 			recognition.continuous = true;
 			recognition.interimResults = false;
 

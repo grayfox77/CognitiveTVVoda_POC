@@ -281,7 +281,11 @@ VodafoneTVApp.factory('serviceData', function($http, $q, $sce){
                             console.log("ENCONTRADO EL ELEMENTO ... ", translatedList[0]);
                         }
                     });
-                    _updateCurrentLayer(_navigationLayers.list);              
+                    if (filterParams.categoria === 'cine'){
+                        _updateCurrentLayer(_navigationLayers.content);
+                    } else {
+                        _updateCurrentLayer(_navigationLayers.list);
+                    }
                 } else if (filterParams.contenido_previsualizar.length > 1 
                     && filterParams.filterName === "" 
                     && filterParams.filterId === ""

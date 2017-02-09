@@ -116,6 +116,7 @@ VodafoneTVApp
 
         $scope.send = function ($event) {
             var keyCode = $event.which || $event.keyCode;
+            
             if (keyCode === 13) {
                 $scope.sendMessage();
             }
@@ -179,7 +180,7 @@ VodafoneTVApp
                                 console.log("DISPARANDO loadInitialContent");
                                 amplify.publish("loadInitialContent", {context : dataContext, contentType: context.categoria});
                                 wContext.contenido_previsualizar = [];
-                                wContext.categoria = "";
+                                //wContext.categoria = "";
                                 
                                 console.log("VACIANDO CONTEXTO ... " , wContext);
                             } else if (serviceData.getCurrentLayer() === serviceData.getNavigationLayers().chapterList && filterParams.filterSeason !== ""){
@@ -189,7 +190,7 @@ VodafoneTVApp
                                 wContext.itemID = "";
                                 wContext.serieINF = "";
                                 wContext.contenido_previsualizar = [];
-                                wContext.categoria = "";
+                                //wContext.categoria = "";
                                 //wContext.seasonID = "";
                             } else if (serviceData.getCurrentLayer() === serviceData.getNavigationLayers().list && context.serieINF !== ""){
                                 console.log("ENTRANDO POR CAPA - SEASON LIST", dataContext);                        
@@ -198,7 +199,7 @@ VodafoneTVApp
                                 wContext.itemID = "";
                                 wContext.serieINF = "";
                                 wContext.contenido_previsualizar = [];
-                                wContext.categoria = "";
+                                //wContext.categoria = "";
                                 /*if (filterParams.filterSeason !== ""){
                                     amplify.publish("goToSeason", { season: filterParams.filterSeason });
                                 }else{
@@ -211,7 +212,7 @@ VodafoneTVApp
                                 wContext.itemID = "";
                                 wContext.serieINF = "";
                                 wContext.contenido_previsualizar = [];
-                                wContext.categoria = "";
+                                //wContext.categoria = "";
                                 wContext.seasonID = ""; 
                                 wContext.elegido = "";  
                                 wContext.temporada = "";                   
@@ -250,7 +251,8 @@ VodafoneTVApp
                     return false;
             } catch (e){
                 return false;
-            }
+            }*/
+           return true;
         }
 
 
