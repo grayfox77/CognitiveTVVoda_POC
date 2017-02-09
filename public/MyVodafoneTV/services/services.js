@@ -258,6 +258,9 @@ VodafoneTVApp.factory('serviceData', function($http, $q, $sce){
                 if (angular.equals(initialList, filterParams.contenido_previsualizar)){
                     console.log("contenido inicial");
                     _updateCurrentLayer(_navigationLayers.default);
+                    if (filterParams.categoria === 'cine' && filterParams.filterName !== "" && filterParams.filterId !== ""){
+                        _updateCurrentLayer(_navigationLayers.content);
+                    }
                 }else if (filterParams.contenido_previsualizar.length > 0 && categoriaList.indexOf[filterParams.categoria] !== -1 
                     && filterParams.filterName === "" 
                     && filterParams.filterId ===""

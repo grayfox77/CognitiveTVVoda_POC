@@ -179,7 +179,7 @@ VodafoneTVApp
                                 console.log("ENTRANDO POR CAPA MAIN ::", dataContext, context.categoria);
                                 console.log("DISPARANDO loadInitialContent");
                                 amplify.publish("loadInitialContent", {context : dataContext, contentType: context.categoria});
-                                wContext.contenido_previsualizar = [];
+                                //wContext.contenido_previsualizar = [];
                                 //wContext.categoria = "";
                                 
                                 console.log("VACIANDO CONTEXTO ... " , wContext);
@@ -195,7 +195,7 @@ VodafoneTVApp
                             } else if (serviceData.getCurrentLayer() === serviceData.getNavigationLayers().list && context.serieINF !== ""){
                                 console.log("ENTRANDO POR CAPA - SEASON LIST", dataContext);                        
                                 console.log("DISPARANDO loadSeasonList");
-                                amplify.publish("loadSeasonList", {elemId: dataContext, defaultSeason: context.contenido_previsualizar});
+                                amplify.publish("loadSeasonList", {elemId: dataContext, defaultSeason: context.contenido_previsualizar, contentType: context.categoria});
                                 wContext.itemID = "";
                                 wContext.serieINF = "";
                                 wContext.contenido_previsualizar = [];

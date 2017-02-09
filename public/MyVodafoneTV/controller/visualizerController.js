@@ -118,7 +118,7 @@ VodafoneTVApp.controller('VisualizerController', ['$scope', '$http', '$q', 'serv
             console.log("Elemento seleccionado :: " + index);
             $scope.itemDetail = $scope.listItem[index];
             
-            if ($scope.currentContentType === 'Cine'){                                
+            if ($scope.currentContentType.toLowerCase() === 'cine'){
                 // CARGAMOS LA PLANTILLA "CONTENTDETAIL" PARA VISUALIZAR EL ELEMENTO
                 $scope.contentTemplate = 'templates/contentDetail.html';
             } else {
@@ -185,7 +185,23 @@ VodafoneTVApp.controller('VisualizerController', ['$scope', '$http', '$q', 'serv
             //$scope.player.play();            
             
         }
+        
+        
+        changeContext = function(contentType, data) {
+            console.log("CAMBIANDO CONTEXTO A :: ", contentType);
+            var dataContent = serviceData.callService(contentType,false);
+            dataContent.then(function (dataContent) {
+                //console.log("dataContent::",dataContent);        
+                angular.forEach(dataContent, function (item, i) {
+                    //console.log (item);      
+                    $scope.listItem[i] = item;                    
+                });
+                $scope.currentContentType = contentType;
+                amplify.publish("loadSeasonList",data);                
+            });
+        }
 
+        
         /* ################################################################################## */
         /* SUBSCRIPCION DE EVENTTOS ######################################################### */
         /* ################################################################################## */
@@ -214,7 +230,9 @@ VodafoneTVApp.controller('VisualizerController', ['$scope', '$http', '$q', 'serv
             });
             if (index !== undefined) {
                 $scope.selectedItemClick(index, data.defaultSeason);
-            }            
+            } else {
+                changeContext(data.contentType, data);
+            }           
             
         });
 
@@ -226,7 +244,18 @@ VodafoneTVApp.controller('VisualizerController', ['$scope', '$http', '$q', 'serv
             var seasonId = data.seasonId;
             var itemToGo;
             
-            angular.forEach($scope.fullContentList, function(seasonItem, i){
+            if ($scope.currentContentType.toLowerCase() === "cine"){
+                angular.forEach($scope.listItem, function(n,i){
+                    if (i+1 === itemId){
+                        //itemToGo = n;
+                        console.log("autoclick en elemento :: ", i);
+                        $scope.listItem[i].url = n.urldetail;
+                        $scope.selectedItemClick(i);
+                    }
+                    console.log("REPRODUCIENDO CINE :: ", "-",  n ,"-", i,"-", itemId,"-", seasonId);
+                });                
+            }else{
+                angular.forEach($scope.fullContentList, function(seasonItem, i){
                 console.log("TEMPORADA [" + seasonItem[0].season + "], ELEMENTO [" +  seasonId +"]", seasonItem );
                 if (seasonItem[0].season.toString() === seasonId.toString()){
                     console.log("EVENTO loadChapterDetail - Renderizando elemento ", seasonItem[itemId]);
@@ -239,7 +268,10 @@ VodafoneTVApp.controller('VisualizerController', ['$scope', '$http', '$q', 'serv
                         }
                     });*/
                 }
-            });
+                });
+            }
+
+            
 
             if (itemToGo !== undefined) $scope.detailedItemClick (itemToGo);
 
