@@ -157,7 +157,8 @@ VodafoneTVApp
                     filterSeason: (context.seasonID !== undefined ? context.seasonID : ""),
                     //filterChapter: ( (entities[0].entity === "sys-number" && context.elegido === "sys-number") ?  entities[0].value : ""),
                     filterChapter: ( context.elegido !== undefined ?  context.elegido : ""),
-                    filterVideo: (context.estado_video !== undefined ? context.estado_video : "")
+                    filterVideo: (context.estado_video !== undefined ? context.estado_video : ""),
+                    filterTime: (context.tiempo !== undefined ? context.tiempo : "")
                 }
 
                 console.log("APLICANDO FILTRO :: ", filterParams);
@@ -208,7 +209,7 @@ VodafoneTVApp
                             } else if (serviceData.getCurrentLayer() === serviceData.getNavigationLayers().content &&  filterParams.filterChapter !== "" && context.elegido !=="" ){
                                 console.log("ENTRANDO POR CAPA - DETALLE");
                                 console.log("Disparando loadChapterDetail", "Temporada", filterParams.filterSeason, "Capitulo", filterParams.filterChapter );
-                                amplify.publish("loadChapterDetail", {itemId: filterParams.filterChapter, seasonId: filterParams.filterSeason});    
+                                amplify.publish("loadChapterDetail", {itemId: filterParams.filterChapter, seasonId: filterParams.filterSeason, elemId: dataContext});    
                                 wContext.itemID = "";
                                 wContext.serieINF = "";
                                 wContext.contenido_previsualizar = [];

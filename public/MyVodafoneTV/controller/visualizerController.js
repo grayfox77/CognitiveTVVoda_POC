@@ -201,6 +201,23 @@ VodafoneTVApp.controller('VisualizerController', ['$scope', '$http', '$q', 'serv
             });
         }
 
+        getIndexFromItem = function(elemId){
+            var elemento = ""
+            console.log("getIndex From item :: ", elemId.toString());
+            if (elemId !== ""){
+                var elemList = $(".list-item-content");
+                angular.forEach(elemList, function(elem, i){
+                    if (elem.id == elemId.toString()){
+                        console.log("ENCONTRADO ELEMENTO [" + (i) + "] para ::" + elemId);
+                        elemento = i;
+                    }
+                });
+            }
+            console.log("DEVOLVIENDO ELEMENTO [" + elemento + "] para ::" + elemId);
+            return elemento;
+            
+        }
+
         
         /* ################################################################################## */
         /* SUBSCRIPCION DE EVENTTOS ######################################################### */
@@ -242,10 +259,11 @@ VodafoneTVApp.controller('VisualizerController', ['$scope', '$http', '$q', 'serv
 
             var itemId = data.itemId;
             var seasonId = data.seasonId;
+            var elemId = (data.elemId.length > 0 ) ? data.elemId[0] : "";
             var itemToGo;
             
             if ($scope.currentContentType.toLowerCase() === "cine"){
-                angular.forEach($scope.listItem, function(n,i){
+                /*angular.forEach($scope.listItem, function(n,i){
                     if (i+1 === itemId){
                         //itemToGo = n;
                         console.log("autoclick en elemento :: ", i);
@@ -253,7 +271,10 @@ VodafoneTVApp.controller('VisualizerController', ['$scope', '$http', '$q', 'serv
                         $scope.selectedItemClick(i);
                     }
                     console.log("REPRODUCIENDO CINE :: ", "-",  n ,"-", i,"-", itemId,"-", seasonId);
-                });                
+                });*/
+                var elemIndex = getIndexFromItem(elemId);
+                $scope.listItem[elemIndex].url = $scope.listItem[elemIndex].urldetail;
+                $scope.selectedItemClick(elemIndex);
             }else{
                 angular.forEach($scope.fullContentList, function(seasonItem, i){
                 console.log("TEMPORADA [" + seasonItem[0].season + "], ELEMENTO [" +  seasonId +"]", seasonItem );
