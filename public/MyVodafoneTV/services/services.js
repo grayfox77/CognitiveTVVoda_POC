@@ -48,6 +48,12 @@ VodafoneTVApp.factory('serviceData', function($http, $q, $sce){
         return _currentLayer;
     }
 
+    var _currentViewContext;
+
+    var _setCurrentViewContext = function ( currentViewContext ) {
+        _currentViewContext = currentViewContext;
+    }
+
     var _callService = function (typeContent, filterList){
 
         console.log("_callService :: " + typeContent);
@@ -217,7 +223,23 @@ VodafoneTVApp.factory('serviceData', function($http, $q, $sce){
 
 
     var _searchByTime = function (duration) {
-        var itemList = _callService("cine", false);
+
+        amplify.publish("updateCurrentContext");
+        var itemList = [];
+        if (_currentViewContext.currentListItem !== [] ){
+            var getPromiseItemList = function (currentList) {
+                var deferred = $q.defer();
+                var promise = deferred.promise;
+                deferred.resolve(currentList);
+                return promise;
+            }
+            //itemList =_currentViewContext.currentListItem;
+            itemList = getPromiseItemList(_currentViewContext.currentListItem);            
+        }else {
+            itemList = _callService("cine", false);
+        }
+
+        //var itemList = _callService("cine", false);
         var returnList = [];
         var deferred = $q.defer();
         itemList.then(function (itemList) {
@@ -227,14 +249,15 @@ VodafoneTVApp.factory('serviceData', function($http, $q, $sce){
                     returnList.push(item);
                 }
             });
+            //returnList = parseList(returnList);
             console.log("_searchByTime :: Elementos con tiempo superior a " + duration + ": ", returnList);
-            deferred.resolve(returnList); ;
+            deferred.resolve(returnList); 
         });
         return $q.when(deferred.promise);
     }
 
 
-    var _translateTime = function (endDateString) {
+    var _translateTime = function (endDateString, timeZone) {
         var endArray = endDateString.split(":");
         var duration;
         console.log("endArray", endArray);
@@ -248,6 +271,10 @@ VodafoneTVApp.factory('serviceData', function($http, $q, $sce){
                 endArray[1],
                 endArray[2],
                 0);
+            if (timeZone === "GMT"){
+                var offset = currentDate.getTimezoneOffset()/60 * -1;
+                endDate.setHours(endDate.getHours() + offset);
+            }
             console.log("EndDate", endDate);
             console.log("currentDate", currentDate);
         }
@@ -303,9 +330,9 @@ VodafoneTVApp.factory('serviceData', function($http, $q, $sce){
         console.log("###########  TRADUCIENDO ELEMENTOS CON FILTRO :: ", filterParams, " ##");
         console.log("#######################################################################");
         var deferred = $q.defer();
-        if (filterParams.filterTime !== "") {
+        if (filterParams.filterTime !== "" && filterParams.filterTimeZone !== "") {
             console.log("FILTRO :: TIEMPO - Buscando contenido que acabe antes de ", filterParams.filterTime);
-            var duration = _translateTime(filterParams.filterTime);
+            var duration = _translateTime(filterParams.filterTime, filterParams.filterTimeZone);
             var timeList = _searchByTime(duration);
             timeList.then(function(timeList){
                 console.log("Elementos con tiempo superior a " + duration + ": ", timeList);
@@ -436,8 +463,9 @@ VodafoneTVApp.factory('serviceData', function($http, $q, $sce){
         getWasonServer: _getWasonServer,
         updateCurrentLayer : _updateCurrentLayer,
         getCurrentLayer : _getCurrentLayer,
-        getNavigationLayers : _getNavigationLayers
-
+        getNavigationLayers: _getNavigationLayers,
+        setCurrentViewContext : _setCurrentViewContext,
+        translateTime : _translateTime
     }
 
 });

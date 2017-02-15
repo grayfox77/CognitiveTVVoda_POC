@@ -55,10 +55,25 @@ VodafoneTVApp
                 addChatRow(true, response.text);
                 console.log("CONTEXTO RECIBIDO WATSON :: ", response.items);
                 analyzeContext(response.items);
+                
             } else {
                 // Actions when response is KO ...
                 //updateChatLog("Error",error);
             }
+        }
+
+        function checkTimeMessage(context, text){
+            var defered = $q.defer();
+            var promise = defered.promise; 
+            var filterTime = (context.tiempo !== undefined ? context.tiempo : "");
+            var filterTimeZone = (context.mitimezone !== undefined ? context.mitimezone : "");
+            if (filterTime.split(':').lenght > 0){
+                text = text.substring(0, text.indexOf(filterTime));
+                defered.resolve(text + serviceData.translateTime(filterTime, filterTimeZone));
+            }else{
+                defered.resolve(text);
+            }
+            return promise;
         }
 
 
@@ -169,7 +184,8 @@ VodafoneTVApp
                     //filterChapter: ( (entities[0].entity === "sys-number" && context.elegido === "sys-number") ?  entities[0].value : ""),
                     filterChapter: ( context.elegido !== undefined ?  context.elegido : ""),
                     filterVideo: (context.estado_video !== undefined ? context.estado_video : ""),
-                    filterTime: (context.tiempo !== undefined ? context.tiempo : "")
+                    filterTime: (context.tiempo !== undefined ? context.tiempo : ""),
+                    filterTimeZone: (context.mitimezone !== undefined ? context.mitimezone : "")
                 }
 
                 console.log("APLICANDO FILTRO :: ", filterParams);

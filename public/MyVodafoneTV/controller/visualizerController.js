@@ -317,6 +317,15 @@ VodafoneTVApp.controller('VisualizerController', ['$scope', '$http', '$q', 'serv
         });
 
 
+        amplify.subscribe("updateCurrentContext", function(){
+            serviceData.setCurrentViewContext(
+                {
+                    currentListItem: $scope.listItem,
+                    currentCategory: $scope.currentContentType
+                }
+            );
+        });
+
 
         $scope.onPlayerReady = function (api) {
             $scope.playerApi = api;
