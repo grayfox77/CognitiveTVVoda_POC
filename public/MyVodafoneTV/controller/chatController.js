@@ -114,6 +114,17 @@ VodafoneTVApp
             document.getElementById("inputMessage").value = "";
         }
 
+        amplify.subscribe("sendMessageTime", function(data){
+            $scope.inputMessage = "";
+            console.log("Contexto inicial :: ", wContext);
+            wContext.categoria = data.categoria;
+            wContext.contenido_previsualizar = data.contenido_previsualizar;
+            delete wContext.tiempo;
+            console.log("Enviando Mensaje con contexto :: ", wContext);
+            //$scope.sendMessage();
+            analyzeContext(wContext);
+        });
+
         $scope.send = function ($event) {
             var keyCode = $event.which || $event.keyCode;
             

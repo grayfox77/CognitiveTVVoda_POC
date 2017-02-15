@@ -80,14 +80,25 @@ VodafoneTVApp.factory('serviceData', function($http, $q, $sce){
                         console.log(contentItem.title); 
                         console.log(contentItem.description);                      
                         console.log(contentItem.pictures.poster);*/
+                        var filterDuration = function (tagList) {
+                            var duration = "";
+                            $.each(tagList, function (i, tag) {
+                                //console.log("TAG :: ", i, tag);
+                                if (tag.key === "Runtime") {
+                                    duration = tag.value;
+                                }
+                            });
+                            return duration;
+                        }
+
                         var item = {
                             id: contentItem.id,
                             title: contentItem.title,
                             description: contentItem.description,
                             //url: (typeContent === "cine") ? contentItem.pictures.player : contentItem.pictures.poster
                             url: contentItem.pictures.poster,
-                            urldetail : (typeContent === "cine") ? contentItem.pictures.player : contentItem.pictures.banner
-                            
+                            urldetail: (typeContent === "cine") ? contentItem.pictures.player : contentItem.pictures.banner,
+                            duration: filterDuration(contentItem.tags_metas)
                         };
 
                         if (filterList === false){
@@ -96,9 +107,6 @@ VodafoneTVApp.factory('serviceData', function($http, $q, $sce){
                             responseList[filterList.indexOf(contentItem.id)] = item;
                         }
 
-
-                        
-                        
                     });
                     console.log("_callService service response :: ", responseList );
 
@@ -155,9 +163,8 @@ VodafoneTVApp.factory('serviceData', function($http, $q, $sce){
                                         sd : elemento.files.sd.url,
                                         //hd : elemento.files.hd.url
                                     }
+                                };
 
-
-                                }
                                 itemList[i] = item;
                                 console.log("ELEMENTO EXTRAIDO :: ", item);
                             },
@@ -208,12 +215,115 @@ VodafoneTVApp.factory('serviceData', function($http, $q, $sce){
     var initialList = ["inf1","adu1","ser1","juv1"];
     var categoriaList = ["cine", "infantil", "series"];
 
+
+    var _searchByTime = function (duration) {
+        var itemList = _callService("cine", false);
+        var returnList = [];
+        var deferred = $q.defer();
+        itemList.then(function (itemList) {
+            console.log("Buscando en el listado de peliculas limitadas por tiempo", itemList);
+            angular.forEach(itemList, function(item, i){
+                if (item.duration < duration){
+                    returnList.push(item);
+                }
+            });
+            console.log("_searchByTime :: Elementos con tiempo superior a " + duration + ": ", returnList);
+            deferred.resolve(returnList); ;
+        });
+        return $q.when(deferred.promise);
+    }
+
+
+    var _translateTime = function (endDateString) {
+        var endArray = endDateString.split(":");
+        var duration;
+        console.log("endArray", endArray);
+        if (endArray.length > 0) {
+            var currentDate = new Date();
+            var endDate = new Date(
+                currentDate.getFullYear(),
+                currentDate.getMonth(),
+                currentDate.getDate(),
+                endArray[0],
+                endArray[1],
+                endArray[2],
+                0);
+            console.log("EndDate", endDate);
+            console.log("currentDate", currentDate);
+        }
+        var duration = (endDate.getTime() - currentDate.getTime()) / 60000;
+        console.log("Buscando una serie que acabe en :: ", duration);
+        return Math.floor(duration);
+    }
+
+    var _translateContent = function(typeContent, listToSearch){
+        
+        var translateList = [];
+        var deferred = $q.defer();
+        var arrayToSearch = [];
+        var returnList = [];
+        console.log("lista de elementos a buscar ID :: ", listToSearch);
+        angular.forEach(listToSearch, function(item, i){
+            arrayToSearch[i]=item.id;
+        });
+        $http.get(hostServer + '/MyVodafoneTV/controller/mock_servicios/content.json')
+        .then(
+            function successCallback(response) {
+                var responseArray=[];
+                angular.forEach(response.data[typeContent], function(item, i){
+                    console.log("ITEM :: ", item.id ,i);
+                    responseArray[item.id.toString()]=i;
+                });
+                if (responseArray !== [] && arrayToSearch.length>0){
+                    angular.forEach(arrayToSearch, function(itemToSearch, indexName){
+                        console.log("Buscando ", itemToSearch);
+                        if (responseArray[itemToSearch] !== undefined){
+                        //if ($.inArray(itemToSearch.id, arrayToSearch)){
+                            console.log(itemToSearch, " está en la lista ");
+                            returnList.push(responseArray[itemToSearch]);
+                        } else {
+                            console.log(itemToSearch, " NO está en la lista ");
+                        }
+                    });
+                }
+                deferred.resolve(returnList);
+            },
+            function errorCallback(response) {                    
+                console.log("Se ha producido un error al procesar la llamada", response);
+                deferred.reject("Se ha producido un error al procesar la llamada" + response);
+            }
+
+        );
+        return $q.when(deferred.promise);
+    }
+
     //var _translateWatsonList = function (typeContent, filterPreview, filterParams){
     var _translateWatsonList = function (filterParams){
         console.log("######################################################################");
         console.log("###########  TRADUCIENDO ELEMENTOS CON FILTRO :: ", filterParams, " ##");
         console.log("#######################################################################");
         var deferred = $q.defer();
+        if (filterParams.filterTime !== "") {
+            console.log("FILTRO :: TIEMPO - Buscando contenido que acabe antes de ", filterParams.filterTime);
+            var duration = _translateTime(filterParams.filterTime);
+            var timeList = _searchByTime(duration);
+            timeList.then(function(timeList){
+                console.log("Elementos con tiempo superior a " + duration + ": ", timeList);
+                var translatedContent = _translateContent(filterParams.categoria, timeList);
+                translatedContent.then(function(translatedContent){
+                    translatedContent = translatedContent.sort();
+                    var wContext = {
+                        cliente : "Alejandro",
+                        categoria : filterParams.categoria,
+                        contenido_previsualizar : translatedContent                        
+                    }
+                    amplify.publish("sendMessageTime", wContext);
+                    console.log("Contenido a enviar a WATSON :: ", translatedContent);
+                });
+
+            });            
+        } else {
+
         $http.get(hostServer+'/MyVodafoneTV/controller/mock_servicios/content.json')
         .then(
             function successCallback(response) {
@@ -312,6 +422,7 @@ VodafoneTVApp.factory('serviceData', function($http, $q, $sce){
                 deferred.reject("Se ha producido un error al procesar la llamada" + response);
             }            
         );
+        }
         return $q.when(deferred.promise);        
     }
     
