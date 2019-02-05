@@ -1,2 +1,0 @@
-fichero e
-editado
