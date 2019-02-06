@@ -1,5 +1,7 @@
 Tareas EDITADO semana del 28 Enero-1 Febrero
 
+3a vez
+
 
 
 -> Filtros (no sobre el modelo de datos, sino contra el API Rest)	-> In progress (sólo faltan las fechas)
