@@ -1,0 +1,36 @@
+Tareas Unicaja semana del 28 Enero-1 Febrero
+
+
+
+-> Filtros (no sobre el modelo de datos, sino contra el API Rest)	-> In progress (sólo faltan las fechas)
+
+-> Adjuntar documentos 							-> OK
+
+-> Actualizar estilos							-> OK
+
+-> Elevar desde aprobación cambiar la implementación actual
+
+-> Reglas de routing de las actividades implementarlas
+
+-> Meter de SLA, escalado. 
+
+-> Código Java metido en las llamadas a HOST				-> OK
+
+-> Implementar las llamada al LDAP					-> En curso
+
+-> Meter el DUAL LIST en el botón OTRO					-> OK
+
+-> Ocultar el botón aprobador cuando el usuario no es aprobador		-> OK
+
+MENOS PRIORIDAD
+
+-> Hacer que escriba en el modelo de datos				-> In progress
+
+-> Revisión funcionalidad global
+
+-> Mandar API a  Unicaja						-> OK
+
+
+>> 1. LISTADO LIQUIDACIONES - Buscar Instancias (los campos que mandó ,PROCESS 
+>> 2. CREAR LIQUDIACIÓN - Crear instancia
+>> 3. DETALLE LIQUIDACIÓN - Darle información de una instancia
